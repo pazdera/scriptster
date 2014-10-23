@@ -101,7 +101,8 @@ module Scriptster
 
     def self.set_file(file)
       @@file.close if @@file
-      @@file = File.open file, "w"
+      @@file = nil
+      @@file = File.open file, "w" if @@file
     end
 
     def self.set_time(time_enabled)
