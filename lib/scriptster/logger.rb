@@ -25,7 +25,7 @@ require "tco"
 
 module Scriptster
   module Logger
-    @@script_name = "scriptster"
+    @@script_name = nil
     @@file = nil
     @@timestamps = false
 
@@ -58,7 +58,7 @@ module Scriptster
     def self.set_file(file)
       @@file.close if @@file
       @@file = nil
-      @@file = File.open file, "w" if @@file
+      @@file = File.open file, "w" if file
     end
 
     def self.show_timestamps
@@ -68,29 +68,33 @@ module Scriptster
     def self.log(msg_type, msg, verbosity=nil)
       if verbosity == nil || verbosity <= @@verbosity
         ts = if @@timestamps
-          Time.now.strftime "%Y-%m-%d %H-%M "
+          Time.now.strftime("%Y-%m-%d %H:%M").style("timestamp") + " "
+        else
+          ""
+        end
+
+        name = unless @@script_name == nil
+          @@script_name.style("name") + " "
         else
           ""
         end
 
         msg.chomp!
 
-        out = ts << @@script_name.style("script-name") << " " <<
-              @@message_types[msg_type].style(msg_type) << " " << msg
-        puts out
+        line = ts << name.style("name") <<
+               @@message_types[msg_type].style(msg_type.to_s) << " " << msg
+        puts line
         STDOUT.flush
 
         if @@file
           # Strip colours from the message before writing to a file
-          file = ts << @@script_name << " " << @@message_types[msg_type] <<
-                 " " << " " << msg.gsub(/\033\[[0-9]+(;[0-9]+){0,2}m/, "")
-          @@file.puts file
+          @@file.puts line.gsub(/\033\[[0-9]+(;[0-9]+){0,2}m/, "")
         end
       end
     end
 
     def log(msg_type, msg, verbosity=nil)
-      Logger::log msg_type, msg, verbostiy
+      Logger::log msg_type, msg, verbosity
     end
 
     def tag(tag, msg)
@@ -99,7 +103,7 @@ module Scriptster
   end
 end
 
-# The Default colour configuration
+# The Default logger styling
 Tco::configure do |conf|
   conf.names["green"] = "#99ad6a"
   conf.names["yellow"] = "#d8ad4c"
@@ -107,7 +111,7 @@ Tco::configure do |conf|
   conf.names["light-grey"] = "#ababab"
   conf.names["dark-grey"] = "#2b2b2b"
   conf.names["purple"] = "#90559e"
-  conf.names["blue"] = "#4D9EEB"
+  conf.names["blue"] = "#4d9eeb"
   conf.names["orange"] = "#ff842a"
   conf.names["brown"] = "#6a4a3c"
 
@@ -136,9 +140,16 @@ Tco::configure do |conf|
     :underline => false
   }
 
-  conf.styles["script-name"] = {
+  conf.styles["name"] = {
     :fg => "purple",
     :bg => "dark-grey",
+    :bright => false,
+    :underline => false
+  }
+
+  conf.styles["timestamp"] = {
+    :fg => "dark-grey",
+    :bg => "default",
     :bright => false,
     :underline => false
   }

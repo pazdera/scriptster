@@ -43,12 +43,7 @@ module Scriptster
   end
 
   def self.configure
-    c = Configuration.new = {
-      :name => "scriptster",
-      :verbosity => :informative,
-      :file => nil,
-      :time => true
-    }
+    c = Configuration.new
 
     yield c
 

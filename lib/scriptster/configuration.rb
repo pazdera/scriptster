@@ -23,6 +23,7 @@
 require "scriptster/logger"
 require "scriptster/shellcmd"
 
+
 module Scriptster
   class Configuration
     attr_writer :name, :verbosity, :file, :timestamps

@@ -1,4 +1,4 @@
-# scriptster - A small library to make your scipts nicer
+# scriptster - A small library to make your scipts a bit nicer
 # Copyright (c) 2014 Radek Pazdera
 
 # MIT License
@@ -37,8 +37,8 @@ module Scriptster
 
       @show_out = false
       @show_err = true
-      @raise_on_error = true
-      @tag = "shell"
+      @raise = true
+      @tag = "cmd"
       @expect = 0
 
       opts.each do |k, v|
@@ -54,8 +54,6 @@ module Scriptster
     private
     def run
       Open3.popen3(@cmd) do |stdin, stdout, stderr, wait_thr|
-        pid = wait_thr.pid
-
         stdout_buffer=""
         stderr_buffer=""
 
@@ -67,6 +65,7 @@ module Scriptster
             end
             break if stdout.closed? && stderr.closed?
 
+            # Remove and process all the finished lines from the output buffer
             stdout_buffer.sub!(/.*\n/m) do
               @out += $&
               if @show_out
@@ -79,6 +78,7 @@ module Scriptster
               ''
             end
 
+            # Remove and process all the finished lines from the error buffer
             stderr_buffer.sub!(/.*\n/m) do
               @err += $&
               if @show_err
@@ -107,7 +107,7 @@ module Scriptster
             log(:err, l.chomp)
           end
         end
-        raise "'#{@cmd}' failed!".fg("red") if @raise_on_error
+        raise "'#{@cmd}' failed!".fg("red") if @raise
       end
     end
   end
