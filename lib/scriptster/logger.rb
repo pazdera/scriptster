@@ -67,21 +67,23 @@ module Scriptster
 
     def self.log(msg_type, msg, verbosity=nil)
       if verbosity == nil || verbosity <= @@verbosity
-        timestamp = if @@timestamps
+        ts = if @@timestamps
           Time.now.strftime "%Y-%m-%d %H-%M "
         else
           ""
         end
 
-        out = timestamp + @@script_name.style("script-name") << " " <<
-              @@message_types[msg_type].style msg_type << " " << msg.chomp
+        msg.chomp!
+
+        out = ts << @@script_name.style("script-name") << " " <<
+              @@message_types[msg_type].style(msg_type) << " " << msg
         puts out
         STDOUT.flush
 
         if @@file
           # Strip colours from the message before writing to a file
-          file = timestamp + @@script_name + " " @@message_types[msg_type] <<
-                 " " << " " << msg.chomp.gsub(/\033\[[0-9]+(;[0-9]+){0,2}m/, "")
+          file = ts << @@script_name << " " << @@message_types[msg_type] <<
+                 " " << " " << msg.gsub(/\033\[[0-9]+(;[0-9]+){0,2}m/, "")
           @@file.puts file
         end
       end
