@@ -1,4 +1,4 @@
-# scriptster - A small library to make your scipts nicer
+# scriptster - A small library to make your scipts a bit nicer
 # Copyright (c) 2014 Radek Pazdera
 
 # MIT License
@@ -23,6 +23,81 @@
 
 require "tco"
 
+module Scriptster
+  module Logger
+    @@script_name = "scriptster"
+    @@file = nil
+    @@timestamps = false
+
+    @@message_types = {
+      :info => "info",
+      :warn => "WARN",
+      :err  => "ERR!",
+      :debug => "dbg?"
+    }
+
+    @@verbosity = :verbose
+    @@logger_verbosity_levels = {
+      :essential => 0,
+      :important => 1,
+      :informative => 2,
+      :verbose => 3
+    }
+
+    def self.set_script_name(name)
+      @@script_name = name
+    end
+
+    def self.set_verbosity(level)
+      msg = "Message verbosity level not recognised (#{})."
+      raise msg unless @@logger_verbosity_levels.has_key? level.to_sym
+
+      @@verbosity = level.to_sym
+    end
+
+    def self.set_file(file)
+      @@file.close if @@file
+      @@file = nil
+      @@file = File.open file, "w" if @@file
+    end
+
+    def self.show_timestamps
+      @@timestamps = true
+    end
+
+    def self.log(msg_type, msg, verbosity=nil)
+      if verbosity == nil || verbosity <= @@verbosity
+        timestamp = if @@timestamps
+          Time.now.strftime "%Y-%m-%d %H-%M "
+        else
+          ""
+        end
+
+        out = timestamp + @@script_name.style("script-name") << " " <<
+              @@message_types[msg_type].style msg_type << " " << msg.chomp
+        puts out
+        STDOUT.flush
+
+        if @@file
+          # Strip colours from the message before writing to a file
+          file = timestamp + @@script_name + " " @@message_types[msg_type] <<
+                 " " << " " << msg.chomp.gsub(/\033\[[0-9]+(;[0-9]+){0,2}m/, "")
+          @@file.puts file
+        end
+      end
+    end
+
+    def log(msg_type, msg, verbosity=nil)
+      Logger::log msg_type, msg, verbostiy
+    end
+
+    def tag(tag, msg)
+      tag.fg("blue").bg("dark-grey") << " " << msg
+    end
+  end
+end
+
+# The Default colour configuration
 Tco::configure do |conf|
   conf.names["green"] = "#99ad6a"
   conf.names["yellow"] = "#d8ad4c"
@@ -65,91 +140,4 @@ Tco::configure do |conf|
     :bright => false,
     :underline => false
   }
-end
-
-module Scriptster
-  module Logger
-    @@script_name = "scriptster"
-    @@file = nil
-    @@time = false
-
-    @@message_types = {
-      :info => "info",
-      :warn => "warn",
-      :err  => "err",
-      :debug => "debug"
-    }
-
-    @@verbosity = :verbose
-    @@logger_verbosity_levels = {
-      :essential => 0,
-      :important => 1,
-      :informative => 2,
-      :verbose => 3
-    }
-
-    def self.set_script_name(name)
-      @@script_name = name
-    end
-
-    def self.set_verbosity(level)
-      msg = "Message verbosity level not recognised (#{})."
-      raise msg unless @@logger_verbosity_levels.has_key? level.to_sym
-
-      @@verbosity = level.to_sym
-    end
-
-    def self.set_file(file)
-      @@file.close if @@file
-      @@file = nil
-      @@file = File.open file, "w" if @@file
-    end
-
-    def self.set_time(time_enabled)
-      @@time = time_enabled
-    end
-
-    def self.log(msg_type, msg, verbosity=nil)
-      now = Time.now.strftime "%Y-%m-%d %H-%M "
-      out = now + @@script_name.style("script-name") << " "
-      file = now + @@script_name + " "
-
-      case msg_type
-      when :info
-        out << "info".style(@@message_types[:info])
-        file << "info"
-        verbosity = :informative unless verbosity
-      when :warn
-        out << "WARN".style(@@message_types[:warn])
-        file << "WARN"
-        verbosity = :informative unless verbosity
-      when :err
-        out << "ERR!".style(@@message_types[:err])
-        file << "ERR!"
-        verbosity = :essential unless verbosity
-      when :debug
-        out << "dbg?".style(@@message_types[:debug])
-        file << "dbg?"
-        verbosity = :verbose unless verbosity
-      end
-
-      if verbosity <= @@verbosity
-        out << " " << msg.chomp
-        puts out
-        STDOUT.flush
-
-        # Strip colours from the message before writing to a file
-        file << " " << msg.chomp.gsub(/\033\[[0-9]+(;[0-9]+){0,2}m/, "")
-        @@file.puts file if @@file
-      end
-    end
-
-    def log(msg_type, msg, verbosity=nil)
-      Logger::log msg_type, msg
-    end
-
-    def tag(tag, msg)
-      tag.fg("blue").bg("dark-grey") << " " << msg
-    end
-  end
 end
