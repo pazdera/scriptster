@@ -20,38 +20,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 
-require "scriptster/version"
 require "scriptster/logger"
 require "scriptster/shellcmd"
-require "scriptster/configuration"
 
 module Scriptster
-  def self.log(*args)
-    Logger::log *args
-  end
+  class Configuration
+    attr_writer :name, :verbosity, :file, :timestamps
 
-  def log(*args)
-    Logger::log *args
-  end
+    def init
+      @name = nil
+      @verbosity = nil
+      @file = nil
+      @timestamps = nil
+    end
 
-  def self.cmd(*args)
-    ShellCmd.new *args
-  end
-
-  def cmd(*args)
-    ShellCmd.new *args
-  end
-
-  def self.configure
-    c = Configuration.new = {
-      :name => "scriptster",
-      :verbosity => :informative,
-      :file => nil,
-      :time => true
-    }
-
-    yield c
-
-    c.apply
+    # Put the settings from this object in effect
+    def apply
+      Logger.set_script_name @name if @name
+      Logger.set_verbosity @verbosity if @verbosity
+      Logger.set_file @file if @file
+      Logger.show_timestamps if @timestamps
+    end
   end
 end
