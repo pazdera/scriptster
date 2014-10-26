@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Scriptster::VERSION
   spec.authors       = ["Radek Pazdera"]
   spec.email         = ["radek@pazdera.co.uk"]
-  spec.summary       = %q{Make your Ruby scipts hip.}
+  spec.summary       = %q{Making your Ruby scipts hip.}
   spec.description   = %q{A simple library for making your scipts a bit nicer.}
   spec.homepage      = "https://github.com/pazdera/scriptster"
   spec.license       = "MIT"
