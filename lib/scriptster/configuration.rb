@@ -25,14 +25,14 @@ require "scriptster/shellcmd"
 
 module Scriptster
   class Configuration
-    attr_writer :name, :verbosity, :file, :timestamps
+    attr_writer :name, :verbosity, :file, :timestamps, :scheme
 
     def initialize
       @name = File.basename($0)
       @verbosity = :verbose
       @file = nil
       @timestamps = true
-      @scheme = :default
+      @scheme = :dark
     end
 
     # Put the settings from this object in effect
@@ -47,7 +47,7 @@ module Scriptster
   end
 
   module ColourSchemes
-    def self.default
+    def self.dark
       Tco::configure do |conf|
         conf.names["green"] = "#99ad6a"
         conf.names["yellow"] = "#d8ad4c"
@@ -105,6 +105,73 @@ module Scriptster
         }
         conf.styles["cmd"] = {
           :fg => "blue", :bg => "dark-grey",
+          :bright => false, :underline => false
+        }
+        conf.styles["timestamp"] = {
+          :fg => "medium-grey", :bg => "default",
+          :bright => false, :underline => false
+        }
+      end
+    end
+
+    def self.light
+      Tco::configure do |conf|
+        conf.names["green"] = "#99ad6a"
+        conf.names["yellow"] = "#d8ad4c"
+        conf.names["red"] = "#cc333f"
+        conf.names["light-grey"] = "#eeeeee"
+        conf.names["medium-grey"] = "#cccccc"
+        conf.names["dark-grey"] = "#2b2b2b"
+        conf.names["purple"] = "#90559e"
+        conf.names["blue"] = "#4d9eeb"
+        conf.names["orange"] = "#ff842a"
+
+        conf.styles["info"] = {
+          :fg => "green", :bg => "default",
+          :bright => false, :underline => false
+        }
+        conf.styles["info-message"] = {
+          :fg => "default", :bg => "default",
+          :bright => false, :underline => false
+        }
+
+        conf.styles["warn"] = {
+          :fg => "dark-grey", :bg => "yellow",
+          :bright => false, :underline => false
+        }
+        conf.styles["warn-message"] = {
+          :fg => "default", :bg => "default",
+          :bright => false, :underline => false
+        }
+
+        conf.styles["err"] = {
+          :fg => "dark-grey", :bg => "red",
+          :bright => false, :underline => false
+        }
+        conf.styles["err-message"] = {
+          :fg => "default", :bg => "default",
+          :bright => false, :underline => false
+        }
+
+        conf.styles["debug"] = {
+          :fg => "dark-grey", :bg => "default",
+          :bright => false, :underline => false
+        }
+        conf.styles["debug-message"] = {
+          :fg => "medium-grey", :bg => "default",
+          :bright => false, :underline => false
+        }
+
+        conf.styles["name"] = {
+          :fg => "purple", :bg => "light-grey",
+          :bright => false, :underline => false
+        }
+        conf.styles["highlight"] = {
+          :fg => "orange", :bg => "default",
+          :bright => false, :underline => false
+        }
+        conf.styles["cmd"] = {
+          :fg => "blue", :bg => "light-grey",
           :bright => false, :underline => false
         }
         conf.styles["timestamp"] = {
