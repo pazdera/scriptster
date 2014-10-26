@@ -44,9 +44,7 @@ module Scriptster
 
   def self.configure
     c = Configuration.new
-
     yield c
-
     c.apply
   end
 end

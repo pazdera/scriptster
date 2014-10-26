@@ -25,7 +25,7 @@ require "tco"
 
 module Scriptster
   module Logger
-    @@script_name = nil
+    @@name = nil
     @@file = nil
     @@timestamps = false
 
@@ -37,20 +37,21 @@ module Scriptster
     }
 
     @@verbosity = :verbose
-    @@logger_verbosity_levels = {
-      :essential => 0,
-      :important => 1,
-      :informative => 2,
-      :verbose => 3
+    @@verbosity_levels = {
+      :quiet => 0,
+      :essential => 1,
+      :important => 2,
+      :informative => 3,
+      :verbose => 4
     }
 
-    def self.set_script_name(name)
-      @@script_name = name
+    def self.set_name(name)
+      @@name = name
     end
 
     def self.set_verbosity(level)
       msg = "Message verbosity level not recognised (#{})."
-      raise msg unless @@logger_verbosity_levels.has_key? level.to_sym
+      raise msg unless @@verbosity_levels.has_key? level.to_sym
 
       @@verbosity = level.to_sym
     end
@@ -65,24 +66,26 @@ module Scriptster
       @@timestamps = true
     end
 
-    def self.log(msg_type, msg, verbosity=nil)
-      if verbosity == nil || verbosity <= @@verbosity
+    def self.log(msg_type, msg, verbosity=:informative)
+      if @@verbosity_levels[verbosity] <= @@verbosity_levels[@@verbosity]
         ts = if @@timestamps
           Time.now.strftime("%Y-%m-%d %H:%M").style("timestamp") + " "
         else
           ""
         end
 
-        name = unless @@script_name == nil
-          @@script_name.style("name") + " "
+        name = if @@name != nil && @@name.length > 0
+          @@name.style("name") + " "
         else
           ""
         end
 
         msg.chomp!
+        msg = Tco::parse msg, Tco::get_style("#{msg_type.to_s}-message")
 
         line = ts << name.style("name") <<
-               @@message_types[msg_type].style(msg_type.to_s) << " " << msg
+               @@message_types[msg_type].style(msg_type.to_s) <<
+               " " << msg
         puts line
         STDOUT.flush
 
@@ -93,64 +96,8 @@ module Scriptster
       end
     end
 
-    def log(msg_type, msg, verbosity=nil)
+    def log(msg_type, msg, verbosity=:informative)
       Logger::log msg_type, msg, verbosity
     end
-
-    def tag(tag, msg)
-      tag.fg("blue").bg("dark-grey") << " " << msg
-    end
   end
-end
-
-# The Default logger styling
-Tco::configure do |conf|
-  conf.names["green"] = "#99ad6a"
-  conf.names["yellow"] = "#d8ad4c"
-  conf.names["red"] = "#cc333f"
-  conf.names["light-grey"] = "#ababab"
-  conf.names["dark-grey"] = "#2b2b2b"
-  conf.names["purple"] = "#90559e"
-  conf.names["blue"] = "#4d9eeb"
-  conf.names["orange"] = "#ff842a"
-  conf.names["brown"] = "#6a4a3c"
-
-  conf.styles["info"] = {
-    :fg => "green",
-    :bg => "dark-grey",
-    :bright => false,
-    :underline => false
-  }
-  conf.styles["warn"] = {
-    :fg => "dark-grey",
-    :bg => "yellow",
-    :bright => false,
-    :underline => false
-  }
-  conf.styles["err"] = {
-    :fg => "dark-grey",
-    :bg => "red",
-    :bright => false,
-    :underline => false
-  }
-  conf.styles["debug"] = {
-    :fg => "light-grey",
-    :bg => "dark-grey",
-    :bright => false,
-    :underline => false
-  }
-
-  conf.styles["name"] = {
-    :fg => "purple",
-    :bg => "dark-grey",
-    :bright => false,
-    :underline => false
-  }
-
-  conf.styles["timestamp"] = {
-    :fg => "dark-grey",
-    :bg => "default",
-    :bright => false,
-    :underline => false
-  }
 end

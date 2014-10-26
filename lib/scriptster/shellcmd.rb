@@ -38,7 +38,7 @@ module Scriptster
       @show_out = false
       @show_err = true
       @raise = true
-      @tag = "cmd"
+      @tag = cmd.split[0]
       @expect = 0
 
       opts.each do |k, v|
@@ -57,42 +57,43 @@ module Scriptster
         stdout_buffer=""
         stderr_buffer=""
 
-        begin
-          loop do
-            IO.select([stdout,stderr]).flatten.compact.each do |io|
-              stdout_buffer += io.readpartial(1) if io.fileno == stdout.fileno
-              stderr_buffer += io.readpartial(1) if io.fileno == stderr.fileno
-            end
-            break if stdout.closed? && stderr.closed?
-
-            # Remove and process all the finished lines from the output buffer
-            stdout_buffer.sub!(/.*\n/m) do
-              @out += $&
-              if @show_out
-                $&.strip.split("\n").each do |line|
-                  line = tag(@tag, line) if @tag
-                  log(:info, line)
-                end
-              end
-
-              ''
+        streams = [stdout, stderr]
+        while streams.length > 0
+          IO.select(streams).flatten.compact.each do |io|
+            if io.eof?
+              streams.delete io
+              next
             end
 
-            # Remove and process all the finished lines from the error buffer
-            stderr_buffer.sub!(/.*\n/m) do
-              @err += $&
-              if @show_err
-                $&.strip.split("\n").each do |line|
-                  line = tag(@tag, line) if @tag
-                  log(:err, line)
-                end
-              end
-
-              ''
-            end
+            stdout_buffer += io.readpartial(1) if io.fileno == stdout.fileno
+            stderr_buffer += io.readpartial(1) if io.fileno == stderr.fileno
           end
-        rescue EOFError
-          ;
+
+          # Remove and process all the finished lines from the output buffer
+          stdout_buffer.sub!(/.*\n/m) do
+            @out += $&
+            if @show_out
+              $&.strip.split("\n").each do |line|
+                line = @tag.style("cmd") + " " + line if @tag
+                log(:info, line)
+              end
+            end
+
+            ''
+          end
+
+          # Remove and process all the finished lines from the error buffer
+          stderr_buffer.sub!(/.*\n/m) do
+            @err += $&
+            if @show_err
+              $&.strip.split("\n").each do |line|
+                line = @tag.style("cmd") + " " + line if @tag
+                log(:err, line)
+              end
+            end
+
+            ''
+          end
         end
 
         @status = wait_thr.value
@@ -103,11 +104,11 @@ module Scriptster
         unless @show_err
           err_lines = @err.split "\n"
           err_lines.each do |l|
-            l = tag(@tag, l.fg("red")) if @tag
+            l = @tag.style("cmd") + " " + l if @tag
             log(:err, l.chomp)
           end
         end
-        raise "'#{@cmd}' failed!".fg("red") if @raise
+        raise "'#{@cmd}' failed!" if @raise
       end
     end
   end
