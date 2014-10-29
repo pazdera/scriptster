@@ -59,7 +59,14 @@ module Scriptster
     def self.set_file(file)
       @@file.close if @@file
       @@file = nil
-      @@file = File.open file, "w" if file
+
+      case
+        when file.is_a?(String) then @@file = File.open file, "w"
+        when file.is_a?(File) then @@file = file
+        when file.is_a?(StringIO) then @@file = file
+        else
+          raise "Not a vailid file"
+      end
     end
 
     def self.show_timestamps
