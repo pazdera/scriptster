@@ -74,6 +74,15 @@ module Scriptster
     end
 
     def self.log(msg_type, msg, verbosity=:informative)
+      # arguments sanity checks
+      unless @@message_types.include? msg_type
+        raise ArgumentError, "Unknown message type :#{msg_type}"
+      end
+
+      unless @@verbosity_levels.include?(verbosity) and verbosity != :quiet
+        raise ArgumentError, "You can't use the :#{verbosity.to_s} verbosity level"
+      end
+
       if @@verbosity_levels[verbosity] <= @@verbosity_levels[@@verbosity]
         ts = if @@timestamps
           Time.now.strftime("%Y-%m-%d %H:%M").style("timestamp") + " "
