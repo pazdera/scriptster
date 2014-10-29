@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/scriptster.png)](http://badge.fury.io/rb/scriptster)
 [![Inline docs](http://inch-ci.org/github/pazdera/scriptster.png)](http://inch-ci.org/github/pazdera/scriptster)
-[![https://travis-ci.org/pazdera/scriptster][https://travis-ci.org/pazdera/scriptster.png][Build Status]]
+[![Build Status](https://travis-ci.org/pazdera/scriptster.svg)](https://travis-ci.org/pazdera/scriptster)
 
 A small library to make your scripts hip ;-).
 
