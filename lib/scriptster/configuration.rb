@@ -32,7 +32,7 @@ module Scriptster
       @verbosity = :verbose
       @file = nil
       @timestamps = true
-      @theme = :dark
+      @colours = :dark
     end
 
     # Put the settings from this object in effect
@@ -42,7 +42,11 @@ module Scriptster
       Logger.set_file @file if @file
       Logger.show_timestamps if @timestamps
 
-      ColourThemes.send @theme
+      if @colours.is_a? Proc
+        @colours.call
+      else
+        ColourThemes.send @colours.to_sym
+      end
     end
   end
 
