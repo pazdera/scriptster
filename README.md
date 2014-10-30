@@ -4,8 +4,6 @@
 [![Inline docs](http://inch-ci.org/github/pazdera/scriptster.png)](http://inch-ci.org/github/pazdera/scriptster)
 [![Build Status](https://travis-ci.org/pazdera/scriptster.svg)](https://travis-ci.org/pazdera/scriptster)
 
-A small library to make your scripts hip ;-).
-
 Scriptster is a small library to help you writing scripts in Ruby. It
 is only consists of two functions and it's especially useful for apps
 that uses many external tools through the shell.
