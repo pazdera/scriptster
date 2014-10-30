@@ -32,7 +32,7 @@ module Scriptster
       @verbosity = :verbose
       @file = nil
       @timestamps = true
-      @scheme = :dark
+      @theme = :dark
     end
 
     # Put the settings from this object in effect
@@ -42,11 +42,11 @@ module Scriptster
       Logger.set_file @file if @file
       Logger.show_timestamps if @timestamps
 
-      ColourSchemes.send @scheme
+      ColourThemes.send @theme
     end
   end
 
-  module ColourSchemes
+  module ColourThemes
     def self.dark
       Tco::configure do |conf|
         conf.names["green"] = "#99ad6a"
