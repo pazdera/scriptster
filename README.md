@@ -36,15 +36,15 @@ The following snippet demonstrates exactly how would you use **scriptster**
 in practice:
 
 ```ruby
-Scriptster::log :info, "Starting ...", :informative
+Scriptster::log :info, "Starting ..."
 
 Scriptster::cmd.new "git branch",
   :show_out = true,
   :show_err = true,
 ```
 
-The last argument of the `log` method is optional and the `cmd` method
-has other options available. You will find more in the
+The `log` method has one more argument available and the `cmd` method
+has other options that you can use. Again, you will find more in the
 [docs](http://www.rubydoc.info/github/pazdera/scriptster/master/frames).
 
 ## Installation
