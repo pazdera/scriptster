@@ -24,11 +24,18 @@
 require "tco"
 
 module Scriptster
+  # This module contains the logging function and related configuration.
   module Logger
+    # The name of the script.
     @@name = nil
+
+    # The IO object to log to.
     @@file = nil
+
+    # Show timestamps flag.
     @@timestamps = false
 
+    # Supported message types.
     @@message_types = {
       :info => "info",
       :warn => "WARN",
@@ -36,7 +43,10 @@ module Scriptster
       :debug => "dbg?"
     }
 
+    # The default verobosity level.
     @@verbosity = :verbose
+
+    # Supported verbosity levels.
     @@verbosity_levels = {
       :quiet => 0,
       :essential => 1,
@@ -45,10 +55,16 @@ module Scriptster
       :verbose => 4
     }
 
+    # A setter for the script name.
+    #
+    # @param [String] name  Desired script name.
     def self.set_name(name)
       @@name = name
     end
 
+    # A setter for for logger verbosity.
+    #
+    # @param [Symbol] level  Desired verbosity level.
     def self.set_verbosity(level)
       msg = "Message verbosity level not recognised (#{})."
       raise msg unless @@verbosity_levels.has_key? level.to_sym
@@ -56,6 +72,9 @@ module Scriptster
       @@verbosity = level.to_sym
     end
 
+    # A setter for the log file.
+    #
+    # @param [String, StringIO, File] file  A path or an IO object.
     def self.set_file(file)
       @@file.close if @@file
       @@file = nil
@@ -69,10 +88,20 @@ module Scriptster
       end
     end
 
-    def self.show_timestamps
-      @@timestamps = true
+    # Toggle showing timestamps with log messages.
+    #
+    # @param [Boolean] flag  True or false.
+    def self.show_timestamps(flag=true)
+      @@timestamps = flag
     end
 
+    # Log a string.
+    #
+    # The message will be written to both stdout and the log file if configured.
+    #
+    # @param [Symbol] msg_type  Type of the message.
+    # @param [String] msg  The contents of the log message.
+    # @param [Symbol] verbosity  Desired verbosity level of this message.
     def self.log(msg_type, msg, verbosity=:informative)
       # arguments sanity checks
       unless @@message_types.include? msg_type
@@ -112,6 +141,9 @@ module Scriptster
       end
     end
 
+    # Instance method wrapper for when the module is included.
+    #
+    # @see Logger.log
     def log(msg_type, msg, verbosity=:informative)
       Logger::log msg_type, msg, verbosity
     end

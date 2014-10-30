@@ -26,11 +26,31 @@ require "tco"
 require "scriptster/logger"
 
 module Scriptster
+  # Represent an executed shell command.
+  #
+  # The command will be executed in the constructor. It runs in the
+  # foreground, so your application will block until it's finished
+  # executing. The logs, however, will be printed real-time as the
+  # command prints its output.
+  #
+  # @attr [Process::status] status  The exit status of the command.
+  # @attr [String] out  The content of the STDOUT of the command.
+  # @attr [String] err  The content of the STDERR of the command.
   class ShellCmd
     attr_reader :status, :out, :err
 
     include Logger
 
+    # Initialise the object and run the command
+    #
+    # @param [String] cmd  The command line to be run.
+    # @param [Hash] opts  Various options of the command.
+    # @option opts [Boolean] :show_out  Care about STDOUT flag.
+    # @option opts [Boolean] :show_err  Care about STDERR flag.
+    # @option opts [Boolean] :raise  Raise on error flag.
+    # @option opts [String] :tag  Logger tag (defaults to the first
+    #                             word of the command line).
+    # @option opts [Integer, Array<Integer>] :expect  Expected return values.
     def initialize(cmd, opts={})
       @out = ""
       @err = ""
@@ -52,6 +72,9 @@ module Scriptster
     end
 
     private
+    # Execute the command and collect all the data from it.
+    #
+    # The function will blog until the command has finished.
     def run
       Open3.popen3(@cmd) do |stdin, stdout, stderr, wait_thr|
         stdout_buffer=""

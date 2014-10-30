@@ -23,9 +23,18 @@
 require "scriptster/logger"
 require "scriptster/shellcmd"
 
+
 module Scriptster
+  # The configuration obejct used in the {Scriptster.configure} method.
+  #
+  # @attr [String] name  The name of the script to be displayed in the logs.
+  # @attr [Symbol] verbosity  The minimum verbosity to of messages to be displayed.
+  # @attr [String, File, StringIO] file  A log file that all messages will be written to.
+  # @attr [Boolean] timestamps  Include timestamps in log messages.
+  # @attr [Symbol, Proc] colours  Desired colour theme (either predefined or custom Proc).
+  #                               @see ColourThemes
   class Configuration
-    attr_writer :name, :verbosity, :file, :timestamps, :scheme
+    attr_writer :name, :verbosity, :file, :timestamps, :colours
 
     def initialize
       @name = File.basename($0)
@@ -35,7 +44,10 @@ module Scriptster
       @colours = :dark
     end
 
-    # Put the settings from this object in effect
+    # Put the settings from this object in effect.
+    #
+    # This function will distribute the configuration to the
+    # appropriate objects and modules.
     def apply
       Logger.set_name @name if @name
       Logger.set_verbosity @verbosity if @verbosity
@@ -50,7 +62,11 @@ module Scriptster
     end
   end
 
+  # A collection of predefined colour settings.
+  #
+  # It's basically a just configuring the tco library.
   module ColourThemes
+    # The colour theme for dark terminals.
     def self.dark
       Tco::configure do |conf|
         conf.names["green"] = "#99ad6a"
@@ -118,6 +134,7 @@ module Scriptster
       end
     end
 
+    # The colour scheme for dark terminals.
     def self.light
       Tco::configure do |conf|
         conf.names["green"] = "#99ad6a"

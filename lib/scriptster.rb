@@ -25,23 +25,49 @@ require "scriptster/logger"
 require "scriptster/shellcmd"
 require "scriptster/configuration"
 
+# The public interface of scriptster is simple. It consists of two
+# functions, cmd and log. The module can be used directly or included
+# in your class.
 module Scriptster
+  # Pass a message to the logger.
+  #
+  # @see Logger.log
   def self.log(*args)
     Logger::log *args
   end
 
+  # The same as {Scriptster.log}.
+  #
+  # @see .log
   def log(*args)
-    Logger::log *args
+    self.log *args
   end
 
+  # Execute a shell command
+  #
+  # @see ShellCmd
   def self.cmd(*args)
     ShellCmd.new *args
   end
 
+  # The same as {Scriptster.cmd}.
+  #
+  # @see .cmd
   def cmd(*args)
-    ShellCmd.new *args
+    self.cmd *args
   end
 
+  # Use this method to reconfigure the library.
+  #
+  # @example
+  #   Scriptster::configure do |conf|
+  #     conf.name = "my-script"
+  #     conf.colours = :light
+  #     conf.timestamps = false
+  #   end
+  #
+  # @yield [c] An instance of the {Configuration} class.
+  # @see Configuration
   def self.configure
     c = Configuration.new
     yield c
