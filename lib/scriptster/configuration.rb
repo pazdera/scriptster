@@ -33,8 +33,9 @@ module Scriptster
   # @attr [Boolean] timestamps  Include timestamps in log messages.
   # @attr [Symbol, Proc] colours  Desired colour theme (either predefined or custom Proc).
   #                               @see ColourThemes
+  # @attr [String] log_format  Template for each line in the logs
   class Configuration
-    attr_writer :name, :verbosity, :file, :timestamps, :colours
+    attr_writer :name, :verbosity, :file, :colours, :log_format, :theme
 
     def initialize
       @name = File.basename($0)
@@ -42,6 +43,7 @@ module Scriptster
       @file = nil
       @timestamps = true
       @colours = :dark
+      @log_format = "%{timestamp} %{name} %{type} %{message}"
     end
 
     # Put the settings from this object in effect.
@@ -52,7 +54,7 @@ module Scriptster
       Logger.set_name @name if @name
       Logger.set_verbosity @verbosity if @verbosity
       Logger.set_file @file if @file
-      Logger.show_timestamps if @timestamps
+      Logger.set_format @log_format if @log_format
 
       if @colours.is_a? Proc
         @colours.call

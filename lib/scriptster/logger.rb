@@ -55,6 +55,8 @@ module Scriptster
       :verbose => 4
     }
 
+    @@format = "%{timestamp} %{name} %{type} %{message}"
+
     # A setter for the script name.
     #
     # @param [String] name  Desired script name.
@@ -88,11 +90,20 @@ module Scriptster
       end
     end
 
-    # Toggle showing timestamps with log messages.
+    # Specify the format of each line in the logs.
     #
-    # @param [Boolean] flag  True or false.
-    def self.show_timestamps(flag=true)
-      @@timestamps = flag
+    # The template can reference the following keys:
+    #   * timestamp
+    #   * name
+    #   * type
+    #   * message
+    #
+    # @example
+    #   Logger::set_format "%{timestamp} %{name} %{type} %{message}"
+    #
+    # @param [String] format  The format template.
+    def self.set_format(format)
+      @@format = format
     end
 
     # Log a string.
@@ -113,14 +124,10 @@ module Scriptster
       end
 
       if @@verbosity_levels[verbosity] <= @@verbosity_levels[@@verbosity]
-        ts = if @@timestamps
-          Time.now.strftime("%Y-%m-%d %H:%M").style("timestamp") + " "
-        else
-          ""
-        end
+          ts = Time.now.strftime("%Y-%m-%d %H:%M:%S").style("timestamp")
 
         name = if @@name != nil && @@name.length > 0
-          @@name.style("name") + " "
+          @@name.style("name")
         else
           ""
         end
@@ -128,9 +135,13 @@ module Scriptster
         msg.chomp!
         msg = Tco::parse msg, Tco::get_style("#{msg_type.to_s}-message")
 
-        line = ts << name.style("name") <<
-               @@message_types[msg_type].style(msg_type.to_s) <<
-               " " << msg
+        line = @@format % {
+          timestamp: ts,
+          name: name,
+          type: @@message_types[msg_type].style(msg_type.to_s),
+          message: msg
+        }
+
         puts line
         STDOUT.flush
 
