@@ -35,13 +35,12 @@ module Scriptster
   #                               @see ColourThemes
   # @attr [String] log_format  Template for each line in the logs
   class Configuration
-    attr_writer :name, :verbosity, :file, :colours, :log_format, :theme
+    attr_accessor :name, :verbosity, :file, :colours, :log_format
 
     def initialize
       @name = File.basename($0)
       @verbosity = :verbose
       @file = nil
-      @timestamps = true
       @colours = :dark
       @log_format = "%{timestamp} %{name} %{type} %{message}"
     end
