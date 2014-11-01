@@ -4,13 +4,13 @@
 [![Inline docs](http://inch-ci.org/github/pazdera/scriptster.png)](http://inch-ci.org/github/pazdera/scriptster)
 [![Build Status](https://travis-ci.org/pazdera/scriptster.svg)](https://travis-ci.org/pazdera/scriptster)
 
-Scriptster is a small library to help you writing scripts in Ruby. It
-is only consists of two functions and it's especially useful for apps
-that uses many external tools through the shell.
+Scriptster is a small Ruby gem that will help you write scripts in Ruby. It
+only consists of two functions and it's especially useful for apps
+which depend on many external tools.
 
-The two basic things this library focuses on are
+This library focuses on these two basic things:
  * Running shell commands
- * Providing nice logs/status messages about what happened
+ * Providing nice logs and status messages about what happened
 
 See the examples bellow.
 
@@ -20,10 +20,11 @@ See the examples bellow.
 require 'scriptster'
 ```
 
-It is not necessary to configure scriptster before using it, in case you're
-fine with the default settings. But if not, the configure method offers
-many options to change. For the full list of options, please refer to
-the [docs](http://www.rubydoc.info/github/pazdera/scriptster/master/frames).
+It's not necessary to configure scriptster before using it, if you're happy
+with the default settings. But chances are you won't be, in which case the
+`configure` method is exactly what you're after. Bellow is a quick example
+(for the full list of options, please refer to the
+[docs](http://www.rubydoc.info/github/pazdera/scriptster/master/frames)).
 
 ```ruby
 Scriptster::configure do |conf|
@@ -32,19 +33,24 @@ Scriptster::configure do |conf|
 end
 ```
 
-The following snippet demonstrates exactly how would you use **scriptster**
+The following snippet demonstrates how can you use **scriptster**
 in practice:
 
 ```ruby
-Scriptster::log :info, "Starting ..."
+Scriptster::log :info, "Checking branches"
 
-Scriptster::cmd.new "git branch",
+git_cmd = Scriptster::cmd.new "git branch",
   :show_out = true,
-  :show_err = true,
+  :show_err = true
+
+branch_exists = git_cmd.out.split("\n").grep(/#{branch}/).length > 0
+Scriptster::log(:warn, "Branch '#{branch}' not found") unless branch_exists
 ```
 
-The `log` method has one more argument available and the `cmd` method
-has other options that you can use. Again, you will find more in the
+The first `log` method will format and print a status message to stdout.
+The latter `cmd` method executes the given `git` command, prints it's
+output, but it also keeps it for processing. You will find more about
+the options and parameters of these functions in the
 [docs](http://www.rubydoc.info/github/pazdera/scriptster/master/frames).
 
 ## Installation
