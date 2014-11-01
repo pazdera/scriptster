@@ -9,7 +9,7 @@ only consists of two functions and it's especially useful for apps
 which depend on many external tools.
 
 <img alt="Example output"
-     href="http://broken.build/assets/images/posts/scriptster-example.png"
+     src="http://broken.build/assets/images/posts/scriptster-example.png"
      style="width:400px;">
 
 This library focuses on these two basic things:
