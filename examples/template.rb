@@ -27,9 +27,17 @@ Scriptster::configure do |conf|
   conf.log_format = '%{timestamp} [%{name}] %{type} %{message}'
 end
 
+### >>> Example
 Scriptster::log :info, "Started!"
-
 ls = Scriptster::cmd 'ls -l | grep -v "^total"',
   show_out: true,
   show_err: true,
   tag: 'ls -l'
+
+files = []
+ls.out.lines.each do |line|
+  files.push line.split[-1]
+end
+
+Scriptster::log :info, files.join(', ')
+# <<<
