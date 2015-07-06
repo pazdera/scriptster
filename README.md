@@ -46,7 +46,7 @@ in practice:
 ```ruby
 Scriptster::log :info, "Checking branches"
 
-git_cmd = Scriptster::cmd.new "git branch",
+git_cmd = Scriptster::cmd "git branch",
   :show_out = true,
   :show_err = true
 
