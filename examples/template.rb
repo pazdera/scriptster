@@ -33,7 +33,7 @@ end
 log :info, "Listing files:"
 ls = cmd 'ls -l | grep -v "^total"',
   show_out: true,
-  show_err: true,
+  out_level: :debug,
   tag: 'ls -l'
 
 files = []
