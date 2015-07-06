@@ -40,7 +40,7 @@ module Scriptster
   #
   # @see .log
   def log(*args)
-    self.log *args
+    Logger::log *args
   end
 
   # Execute a shell command
@@ -54,7 +54,7 @@ module Scriptster
   #
   # @see .cmd
   def cmd(*args)
-    self.cmd *args
+    ShellCmd.new *args
   end
 
   # Use this method to reconfigure the library.
