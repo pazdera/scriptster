@@ -46,6 +46,8 @@ module Scriptster
     # @param [String] cmd  The command line to be run.
     # @param [Hash] opts  Various options of the command.
     # @option opts [Boolean] :show_out  Care about STDOUT flag.
+    # @option opts [Boolean] :out_level To which log level to print the output
+    #                                   [default: :info].
     # @option opts [Boolean] :show_err  Care about STDERR flag.
     # @option opts [Boolean] :raise  Raise on error flag.
     # @option opts [String] :tag  Logger tag (defaults to the first
@@ -56,6 +58,7 @@ module Scriptster
       @err = ""
 
       @show_out = false
+      @out_level = :info
       @show_err = true
       @raise = true
       @tag = cmd.split[0]
@@ -74,7 +77,7 @@ module Scriptster
     private
     # Execute the command and collect all the data from it.
     #
-    # The function will blog until the command has finished.
+    # The function will block until the command has finished.
     def run
       Open3.popen3(@cmd) do |stdin, stdout, stderr, wait_thr|
         stdout_buffer=""
@@ -98,7 +101,7 @@ module Scriptster
             if @show_out
               $&.strip.split("\n").each do |line|
                 line = @tag.style("cmd") + " " + line if @tag
-                log(:info, line)
+                log(@out_level, line)
               end
             end
 
