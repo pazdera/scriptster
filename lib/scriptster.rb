@@ -20,6 +20,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 
+require "docopt"
+
 require "scriptster/version"
 require "scriptster/logger"
 require "scriptster/shellcmd"
@@ -33,7 +35,7 @@ module Scriptster
   #
   # @see Logger.log
   def self.log(*args)
-    Logger::log *args
+    log *args
   end
 
   # The same as {Scriptster.log}.
@@ -47,7 +49,7 @@ module Scriptster
   #
   # @see ShellCmd
   def self.cmd(*args)
-    ShellCmd.new *args
+    cmd *args
   end
 
   # The same as {Scriptster.cmd}.
@@ -72,5 +74,26 @@ module Scriptster
     c = Configuration.new
     yield c
     c.apply
+  end
+
+  # Process command line arguments using docopt and return
+  # the array of options.
+  #
+  # @param [String] docopt_string The interface spec to be passed to docopt.
+  # @return [Array] The processed CLI options, straight from docopt.
+  def self.parse_args(docopt_string)
+    parse_args(docopt_string)
+  end
+
+  # The same as {Scriptster.parse_args}.
+  #
+  # @see .parse_args
+  def parse_args(docopt_string)
+    begin
+      return Docopt::docopt docopt_string
+    rescue Docopt::Exit => e
+      STDERR.puts e.message
+      exit 1
+    end
   end
 end
