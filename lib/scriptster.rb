@@ -31,11 +31,13 @@ require "scriptster/configuration"
 # functions, cmd and log. The module can be used directly or included
 # in your class.
 module Scriptster
+  Configuration.new.apply
+
   # Pass a message to the logger.
   #
   # @see Logger.log
   def self.log(*args)
-    log *args
+    Logger::log *args
   end
 
   # The same as {Scriptster.log}.
@@ -49,7 +51,7 @@ module Scriptster
   #
   # @see ShellCmd
   def self.cmd(*args)
-    cmd *args
+    ShellCmd.new *args
   end
 
   # The same as {Scriptster.cmd}.
@@ -81,16 +83,21 @@ module Scriptster
   #
   # @param [String] docopt_string The interface spec to be passed to docopt.
   # @return [Array] The processed CLI options, straight from docopt.
-  def self.parse_args(docopt_string)
-    parse_args(docopt_string)
+  def self.parse_args(docopt_string, argv=nil)
+    do_parse_args docopt_string, argv
   end
 
   # The same as {Scriptster.parse_args}.
   #
   # @see .parse_args
-  def parse_args(docopt_string)
+  def parse_args(docopt_string, argv=nil)
+    do_parse_args docopt_string, argv
+  end
+
+  private
+  def self.do_parse_args(docopt_string, argv=nil)
     begin
-      return Docopt::docopt docopt_string
+      return Docopt::docopt docopt_string, argv: argv
     rescue Docopt::Exit => e
       STDERR.puts e.message
       exit 1
