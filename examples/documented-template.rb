@@ -5,8 +5,8 @@
 # Scriptster::cmd docs:       http://bit.ly/1LOuVrB
 
 require 'scriptster'
-include Scriptster
 
+include Scriptster
 Scriptster::configure do |conf|
   conf.verbosity = :informative
   conf.log_format = '%{timestamp} [%{name}] %{type} %{message}'
@@ -21,7 +21,7 @@ Options:
 DOCOPT
 
 dir = args['<dir>'] || '~'
-log :info, "Listing files in #{dir}:"
+log :info, "Listing files in #{dir}"
 ls = cmd "ls -l #{dir} | grep -v '^total'",
   show_out: true,
   out_level: :debug,
