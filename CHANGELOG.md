@@ -1,3 +1,9 @@
+## 0.2.2 (2015-07-12)
+
+Improvements:
+
+  - added the parse_args method
+
 ## 0.2.1 (2015-07-06)
 
 Bug fixes:
