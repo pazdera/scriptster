@@ -44,7 +44,7 @@ module Scriptster
   #
   # @see .log
   def log(*args)
-    Logger::log *args
+    Scriptster.log *args
   end
 
   # Execute a shell command
@@ -58,7 +58,7 @@ module Scriptster
   #
   # @see .cmd
   def cmd(*args)
-    ShellCmd.new *args
+    Scriptster.cmd *args
   end
 
   # Use this method to reconfigure the library.
@@ -91,7 +91,7 @@ module Scriptster
   #
   # @see .parse_args
   def parse_args(docopt_string, argv=nil)
-    do_parse_args docopt_string, argv
+    Scriptster.do_parse_args docopt_string, argv
   end
 
   private
