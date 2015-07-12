@@ -218,4 +218,34 @@ describe Scriptster do
       }.to raise_exception RuntimeError
     end
   end
+
+  describe "#parse_args" do
+    before :all do
+      doc = <<DOCOPT
+Usage: test [-ab]
+
+Options:
+-a, --aaa      The first option
+-b, --bbb      The second option
+DOCOPT
+
+      @args = Scriptster::parse_args doc, ['-a']
+    end
+
+    it "returns a Hash" do
+      expect(@args).to be_an Hash
+    end
+
+    it "the Hash has two keys" do
+      expect(@args.length).to be(2)
+    end
+
+    it "--aaa is true" do
+      expect(@args['--aaa']).to be
+    end
+
+    it "--bbb is true" do
+      expect(@args['--bbb']).not_to be
+    end
+  end
 end
