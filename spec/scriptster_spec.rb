@@ -106,6 +106,16 @@ describe Scriptster do
       Scriptster::log :info, "Hello there"
       expect(@out.string.strip).to match /info Hello there/
     end
+
+    it "the instance version works" do
+      class Test
+        include Scriptster
+      end
+
+      t = Test.new
+      t.log :info, "Hello there"
+      expect(@out.string.strip).to match /info Hello there/
+    end
   end
 
   describe "#cmd" do
@@ -217,11 +227,21 @@ describe Scriptster do
         Scriptster::cmd "cat #{@dir}/nonexistent.txt", :expect => 10
       }.to raise_exception RuntimeError
     end
+
+    it "the instance version works" do
+      class Test
+        include Scriptster
+      end
+
+      t = Test.new
+      cat = t.cmd "cat #{@dir}/file.txt", :show_out => false
+      expect(cat.out).to eq "Multi-line\nFile contents\n"
+    end
   end
 
   describe "#parse_args" do
     before :all do
-      doc = <<DOCOPT
+      @doc = <<DOCOPT
 Usage: test [-ab]
 
 Options:
@@ -229,11 +249,11 @@ Options:
 -b, --bbb      The second option
 DOCOPT
 
-      @args = Scriptster::parse_args doc, ['-a']
+      @args = Scriptster::parse_args @doc, ['-a']
     end
 
     it "returns a Hash" do
-      expect(@args).to be_an Hash
+      expect(@args).to be_a Hash
     end
 
     it "the Hash has two keys" do
@@ -246,6 +266,16 @@ DOCOPT
 
     it "--bbb is true" do
       expect(@args['--bbb']).not_to be
+    end
+
+    it "the instance method works" do
+      class Test
+        include Scriptster
+      end
+
+      t = Test.new
+      args = t.parse_args @doc, ['-a']
+      expect(args).to be_a Hash
     end
   end
 end
