@@ -47,9 +47,10 @@ in practice:
 Scriptster::log :info, "Checking branches"
 
 git_cmd = Scriptster::cmd "git branch",
-  :show_out = true,
-  :show_err = true
+  :show_out => true,
+  :show_err => true
 
+branch = "develop"
 branch_exists = git_cmd.out.split("\n").grep(/#{branch}/).length > 0
 Scriptster::log(:warn, "Branch '#{branch}' not found") unless branch_exists
 ```
