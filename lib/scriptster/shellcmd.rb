@@ -80,6 +80,7 @@ module Scriptster
     # The function will block until the command has finished.
     def run
       Open3.popen3(@cmd) do |stdin, stdout, stderr, wait_thr|
+        stdin.close # leaving stdin open when we don't use it can cause some commands to hang
         stdout_buffer=""
         stderr_buffer=""
 
