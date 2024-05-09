@@ -9,8 +9,8 @@ only consists of two functions and it's especially useful for apps
 which depend on many external tools.
 
 <img alt="Example output"
-     src="http://broken.build/assets/images/posts/scriptster-example.png"
-     style="width:400px;">
+     src="https://radek.io/images/posts/scriptster/scriptster-rainbow.png"
+     style="width:600px;">
 
 This library focuses on these two basic things:
  * Running shell commands
